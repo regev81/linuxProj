@@ -4,4 +4,7 @@
 #define BITSINBLOCK 64
 void readAsciiFile(char* filePath, char* fileContent);
 void printCharBits(char c);
-void printBlockBits(unsigned long block);
+char** stringToBlocksArray(char* stream, int* blocksCount_p);
+void freeBlocksArray(char** blocksArray, int blocksCount);
+void printBlockStr(char* block);
+void printBlockBits(char* block);
