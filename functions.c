@@ -1,90 +1,100 @@
 #define _CRT_SECURE_NO_DEPRECATE
 #include <stdio.h>
-#include <string.h>
+#include <stdlib.h>
+#include <ctype.h>
+#include <math.h>
+#include <time.h>
 #include "functions.h"
 
-//read the ascii string from the file
-void readAsciiFile(char* filePath, char* fileContent)
+
+//get amount of chars in file
+int findFileSize(char* filePath)
 {
-	FILE* fp;
-
-	fp = fopen(filePath, "r");
-	fscanf(fp, "%s", fileContent);
-	//printf("File content:\n%s", fileContent);
-
-	fclose(fp);
-}
-
-//return array of block (64 bit/8 chars) from string stream
-char** stringToBlocksArray(char* stream, int* blocksCount_p)
-{
-	int i;
-	int blocksCount;
-	int streamLen = strlen(stream);
-	int remainder = streamLen % CHARSINBLOCK;
-	int div = streamLen / CHARSINBLOCK;
-	
-	if (remainder == 0)
-	{
-		blocksCount = div;
-	}
+	int size;
+	FILE* fp = fopen(filePath, "r");
+	if (fseek(fp, 0L, SEEK_END))
+		perror("fseek() failed");
 	else
-	{
-		blocksCount = div+1;
-	}
-	
-	//create the blocksArray
-	char** blocksArray = (char**)malloc(blocksCount * sizeof(char*));
-	char* currentBlock = stream;
-	for (i=0; i < blocksCount; i++)
-	{
-		blocksArray[i] = (char*)malloc(CHARSINBLOCK+1 * sizeof(char));
-		memset(blocksArray[i]+ CHARSINBLOCK, '\0', 1);
-		strncpy(blocksArray[i], currentBlock, CHARSINBLOCK);
-		currentBlock = currentBlock + CHARSINBLOCK;
-		
-		//for debug
-		//puts(blocksArray[i]);
-	}
+		size = ftell(fp);
+	fclose(fp);
 
-	*blocksCount_p = blocksCount;
-	return blocksArray;
+	return size;
 }
 
-//print the block as string
-void printBlockStr(char* block)
-{
-	puts(block);
-}
-
-//print the block as bits
-void printBlockBits(char* block)
-{
-	char* c_p = block;
-	for (c_p = block;*c_p != '\0'; c_p++)
-	{
-		printCharBits(*c_p);
-	}
-}
-
-//print char as bits
-void printCharBits(char c)
+//return char array (not NULL ("/0") terminates string!!) of the file content
+char* fileToCharArray(char* filePath, int charArrSize)
 {
 	int i = 0;
-	for (int i = BITSINCHAR - 1; 0 <= i; i--)
+	char ch;
+
+	char* charArr = (char*)malloc(charArrSize * sizeof(char));
+	FILE* fp = fopen(filePath, "r");
+
+	while (!feof(fp))
 	{
-		printf("%c", (c & (1 << i)) ? '1' : '0');
+		ch = getc(fp);
+		charArr[i] = ch;
+		i++;
+	}
+
+	fclose(fp);
+
+	return charArr;
+
+}
+
+//return bits array of the char array
+int* charArrToBitsArr(char* charArr, int charArrSize)
+{
+	int i, j;
+	int bitIndex = 0;
+	int bitsCount = charArrSize * BITSINCHAR;
+	int* bitsArr = (int*)malloc(bitsCount * sizeof(int));
+	for (i = 0; i < charArrSize; i++)
+	{
+		int* charBitsArr = charToBitsArr(charArr[i]);
+		for (j = 0; j < BITSINCHAR; j++)
+		{
+			bitsArr[bitIndex] = charBitsArr[j];
+			bitIndex++;
+		}
+		// free the charBitsArr
+		free(charBitsArr);
+	}
+
+	return bitsArr;
+}
+
+// return bits array of the char
+int* charToBitsArr(char c)
+{
+	int k, m, j;
+	int* bitsArr = (int*)malloc(BITSINCHAR * sizeof(int));
+	j = 0;
+	for (int i = BITSINCHAR-1; i >= 0; i--)
+	{
+		m = 1 << i;
+		k = c & m;
+		k = k >> i;
+		if (k == 0)
+			bitsArr[j] = 0;
+		else
+			bitsArr[j] = 1;
+		j++;
+	}
+
+	return bitsArr;
+}
+
+void printBitsArr(int* bitsArr, int size)
+{
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		printf("%d",bitsArr[i]);
+
 	}
 }
 
-//free the blocks array (from malloc)
-void freeBlocksArray(char** blocksArray, int blocksCount)
-{
-	int i;
-	for (i = 0; i < blocksCount; i++)
-	{
-		free(blocksArray[i]);
-	}
-}
 
 
