@@ -21,13 +21,13 @@ int findFileSize(char* filePath)
 	return size;
 }
 
-//return char array (not NULL ("/0") terminates string!!) of the file content
+//return char array of the file content
 char* fileToCharArray(char* filePath, int charArrSize)
 {
 	int i = 0;
 	char ch;
 
-	char* charArr = (char*)malloc(charArrSize * sizeof(char));
+	char* charArr = (char*)malloc((charArrSize+1) * sizeof(char));
 	FILE* fp = fopen(filePath, "r");
 
 	while (!feof(fp))
@@ -38,7 +38,7 @@ char* fileToCharArray(char* filePath, int charArrSize)
 	}
 
 	fclose(fp);
-
+	charArr[charArrSize] = 0;
 	return charArr;
 
 }
@@ -96,5 +96,57 @@ void printBitsArr(int* bitsArr, int size)
 	}
 }
 
+//devide the charArr to blocks (8 chars in block)
+char** CharArrToCharBlocks(char* charArr, int charCount,int* blockCount_p)
+{
+	
+	int reminder = charCount % CHARSINBLOCK;
+	*blockCount_p = charCount / CHARSINBLOCK;
 
+	if (reminder != 0)
+	{
+		*blockCount_p = *blockCount_p + 1;
+	}
 
+	char** blocksArr = (char**)malloc(*blockCount_p * sizeof(char*));
+	int i,j;
+	for (i = 0; i < *blockCount_p; i++)
+	{
+		blocksArr[i] = (char*)malloc((CHARSINBLOCK+1) * sizeof(char));
+
+		for (j = 0; j < CHARSINBLOCK; j++)
+		{
+			int indexInCharArr = j + (i * CHARSINBLOCK);
+			if (indexInCharArr > charCount - 1)
+			{
+				blocksArr[i][j] = 0;
+			}
+			else
+			{
+				blocksArr[i][j] = charArr[j + (i * CHARSINBLOCK)];
+			}
+		}
+		blocksArr[i][CHARSINBLOCK] = 0;
+	}
+	return blocksArr;
+}
+
+void printCharsBlock(char** charsBlocksArr, int blocksAmount)
+{
+	int i;
+	for (i = 0; i < blocksAmount;i++)
+	{
+		printCharBlock(charsBlocksArr[i]);
+		printf("\n");
+		fflush(stdout);
+	}
+}
+
+void printCharBlock(char* charBlock)
+{
+	int i;
+	for (i = 0; i < CHARSINBLOCK; i++)
+	{
+		printf("%c", charBlock[i]);
+	}
+}
