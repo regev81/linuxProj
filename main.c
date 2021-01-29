@@ -2,7 +2,7 @@
 #include <string.h>
 #include "functions.h"
 #define FILE "file.txt"
-
+//https://en.wikipedia.org/wiki/Data_Encryption_Standard
 void testMainRoy();
 
 int main(int argc, char* argv[]) 
@@ -35,8 +35,12 @@ void testMainRoy()
 		printBitsArr(bitsBlock, BITSINBLOCK);
 
 		//perform initial permutation
-		int* bitsBlockAfterInitialPer = blockPermutation(bitsBlock, CHARSINBLOCK);
+		int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock, CHARSINBLOCK);
 		printBitsArr(bitsBlockAfterInitialPer, BITSINBLOCK);
+
+		/////////////
+		//perform block encription
+		/////////////
 
 		//free allocated memory
 		free(bitsBlock);
