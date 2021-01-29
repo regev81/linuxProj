@@ -11,3 +11,4 @@ void printBitsArr(int* bitsArr, int size);
 char** CharArrToCharBlocks(char* charArr, int charCount, int* blockCount_p);
 void printCharsBlock(char** charsBlocksArr, int blocksAmount);
 void printCharBlock(char* charBlock);
+int* blockPermutation(int* bitsBlock);

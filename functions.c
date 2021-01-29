@@ -5,6 +5,7 @@
 #include <math.h>
 #include <time.h>
 #include "functions.h"
+#include "Helpers.h"
 
 
 //get amount of chars in file
@@ -94,6 +95,7 @@ void printBitsArr(int* bitsArr, int size)
 		printf("%d",bitsArr[i]);
 
 	}
+	printf("\n");
 }
 
 //devide the charArr to blocks (8 chars in block)
@@ -138,7 +140,7 @@ void printCharsBlock(char** charsBlocksArr, int blocksAmount)
 	{
 		printCharBlock(charsBlocksArr[i]);
 		printf("\n");
-		fflush(stdout);
+		//fflush(stdout);
 	}
 }
 
@@ -149,4 +151,17 @@ void printCharBlock(char* charBlock)
 	{
 		printf("%c", charBlock[i]);
 	}
+	printf("\n");
+}
+
+//perform initial permutation for bits block
+int* blockPermutation(int* bitsBlock)
+{
+	int i;
+	int* bitsBlockAfterPermutation = (int*)malloc(BITSINBLOCK * sizeof(int));
+	for (i = 0; i < BITSINBLOCK; i++)
+	{
+		bitsBlockAfterPermutation[i] = bitsBlock[InitialPermutationMatrix[i]-1];
+	}
+	return bitsBlockAfterPermutation;
 }
