@@ -155,7 +155,7 @@ void printCharBlock(char* charBlock)
 }
 
 //perform initial permutation for bits block
-int* blockPermutation(int* bitsBlock)
+int* initialPermutation(int* bitsBlock)
 {
 	int i;
 	int* bitsBlockAfterPermutation = (int*)malloc(BITSINBLOCK * sizeof(int));
@@ -164,4 +164,28 @@ int* blockPermutation(int* bitsBlock)
 		bitsBlockAfterPermutation[i] = bitsBlock[InitialPermutationMatrix[i]-1];
 	}
 	return bitsBlockAfterPermutation;
+}
+
+//recive half of block (32 bit) and a key 
+int* feistelFunction(int* rightInput,int* key)
+{
+	//Extension
+	int* extendBits = expansion(rightInput);
+
+	//Key mixing
+	//Substitution
+	//Permutation
+
+}
+//perform extention from 32 bits array to 48 bits array
+int* expansion(int* rightInput)
+{
+	int i;
+	int bitsInOutput = 48;
+	int* extendBits = (int*)malloc(bitsInOutput * sizeof(int));
+	for (i = 0; i < bitsInOutput; i++)
+	{
+		extendBits[i] = rightInput[ExtenderMatrix[i] - 1];
+	}
+	return extendBits;
 }
