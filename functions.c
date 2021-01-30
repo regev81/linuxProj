@@ -166,26 +166,93 @@ int* initialPermutation(int* bitsBlock)
 	return bitsBlockAfterPermutation;
 }
 
-//recive half of block (32 bit) and a key 
-int* feistelFunction(int* rightInput,int* key)
+//create half a block from the left or right side of the block
+int* divideBlock(int* block, HalfBlockSide side)
 {
+	int startIndex, endIndex, i, j;
+	int* halfBlock = (int*)malloc((BITSINBLOCK/2) * sizeof(int));
+	
+	if (side == LEFT)
+	{
+		startIndex = 0;
+		endIndex = (BITSINBLOCK / 2);
+	}
+	else 
+	{
+		startIndex = (BITSINBLOCK / 2);
+		endIndex = (BITSINBLOCK);
+	}
+
+	j = 0;
+	for (i = startIndex; i < endIndex; i++)
+	{
+		halfBlock[j] = block[i];
+		j++;
+	}
+
+	return halfBlock;
+}
+
+//recive half of block (32 bit) and a key 
+int* feistelFunction(int* halfBlock,int* subkey)
+{
+	printf("subkey:\n");
+	printBitsArr(subkey, BITSINSUBKEY);
+
 	//Extension
-	int* extendBits = expansion(rightInput);
+	int* extendBits = expansion(halfBlock);
+	printf("extend bits:\n");
+	printBitsArr(extendBits, BITSINSUBKEY);
 
 	//Key mixing
+	int* keyMixingBits = keyMixing(extendBits, subkey);
+	printf("key mixing (xor) bits:\n");
+	printBitsArr(keyMixingBits, BITSINSUBKEY);
+
 	//Substitution
+
 	//Permutation
+
+
+	//free(halfBlock);
+	//free(extendBits);
+	//free(subkey);
 
 }
 //perform extention from 32 bits array to 48 bits array
 int* expansion(int* rightInput)
 {
 	int i;
-	int bitsInOutput = 48;
-	int* extendBits = (int*)malloc(bitsInOutput * sizeof(int));
-	for (i = 0; i < bitsInOutput; i++)
+	int* extendBits = (int*)malloc(BITSINSUBKEY * sizeof(int));
+	for (i = 0; i < BITSINSUBKEY; i++)
 	{
 		extendBits[i] = rightInput[ExtenderMatrix[i] - 1];
 	}
 	return extendBits;
+}
+
+//perform xor between the half block and the subkey
+int* keyMixing(int* halfBlock, int* subkey)
+{
+	int i;
+	int* result = (int*)malloc(BITSINSUBKEY * sizeof(int));
+	for (i = 0; i < BITSINSUBKEY; i++)
+	{
+		result[i] = xorOperation(halfBlock[i], subkey[i]);
+	}
+
+	return result;
+}
+
+//perform xor operation between 2 bits represented as int
+int xorOperation(int bit, int bit2)
+{
+	if (bit == bit2)
+	{
+		return 0;
+	}
+	else
+	{
+		1;
+	}
 }

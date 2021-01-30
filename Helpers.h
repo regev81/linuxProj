@@ -1,4 +1,5 @@
 #pragma once
+
 int InitialPermutationMatrix[64] =
 {
     58, 50, 42, 34, 26, 18, 10, 2,
