@@ -2,6 +2,10 @@
 #define BITSINCHAR 8
 #define CHARSINBLOCK 8
 #define BITSINBLOCK 64
+#define BITSINSUBKEY 48
+typedef enum {
+	LEFT, RIGHT
+} HalfBlockSide;
 
 int findFileSize(char* filePath);
 char* fileToCharArray(char* filePath, int charArrSize);
@@ -13,4 +17,7 @@ void printCharsBlock(char** charsBlocksArr, int blocksAmount);
 void printCharBlock(char* charBlock);
 int* initialPermutation(int* bitsBlock);
 int* expansion(int* rightInput);
-int* feistelFunction(int* rightInput, int* key);
+int* feistelFunction(int* halfBlock, int* subkey);
+int xorOperation(int bit, int bit2);
+int* keyMixing(int* halfBlock, int* subkey);
+int* divideBlock(int* block, HalfBlockSide side);

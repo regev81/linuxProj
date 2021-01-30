@@ -32,19 +32,47 @@ void testMainRoy()
 		
 		//convert current char block to bits block
 		int* bitsBlock = charArrToBitsArr(charsBlocksArr[i], CHARSINBLOCK);
+		printf("bits block:\n", i);
 		printBitsArr(bitsBlock, BITSINBLOCK);
 
 		//perform initial permutation
 		int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock, CHARSINBLOCK);
+		printf("InitialPer bits:\n", i);
 		printBitsArr(bitsBlockAfterInitialPer, BITSINBLOCK);
 
-		/////////////
 		//perform block encription
-		/////////////
+		////////////////////////////////////////////////////////////
+
+		//left half block
+		HalfBlockSide left = LEFT;
+		int* leftHalfBlock = divideBlock(bitsBlockAfterInitialPer, left);
+		printf("LEFT side:\n");
+		printBitsArr(leftHalfBlock, BITSINBLOCK / 2);
+
+		//right half block
+		//HalfBlockSide right = RIGHT;
+		//int* rightHalfBlock = divideBlock(bitsBlockAfterInitialPer, right);
+		//printf("RIGHT side:\n");
+		//printBitsArr(rightHalfBlock, BITSINBLOCK / 2);
+
+		//
+		int subkeytest[48] =
+		{
+			1, 0, 1, 0, 1, 0, 1, 0,
+			1, 1, 0, 1, 0, 1, 1,1,
+			1, 0, 0, 1, 0, 0, 1, 1,
+			0, 1, 1, 1, 1, 0, 1, 0,
+			1, 0, 1, 0, 1, 0, 1, 1,
+			1, 0, 0, 1, 0, 0, 0, 1
+
+		};
+		feistelFunction(leftHalfBlock, subkeytest);
+
 
 		//free allocated memory
 		free(bitsBlock);
 		free(bitsBlockAfterInitialPer);
+		free(leftHalfBlock);
 		printf("\n");
 	}
 
