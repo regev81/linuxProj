@@ -3,6 +3,9 @@
 #define CHARSINBLOCK 8
 #define BITSINBLOCK 64
 #define BITSINSUBKEY 48
+#define HALF_KEY_SIZE 28
+#define KEY_SIZE 56
+#define ROUNDS 16
 typedef enum {
 	LEFT, RIGHT
 } HalfBlockSide;
@@ -18,9 +21,13 @@ char** CharArrToCharBlocks(char* charArr, int charCount, int* blockCount_p);
 void printCharsBlock(char** charsBlocksArr, int blocksAmount);
 void printCharBlock(char* charBlock);
 int* initialPermutation(int* bitsBlock);
-int* expansion(int* halfBlock);
+int* keySecondPermutation(int* keyBlock);
+int* keyfirstPermutation(int* keyBlock);
+int* expansion(int* rightInput);
 int* feistelFunction(int* halfBlock, int* subkey);
 int bitXorOperation(int bit, int bit2);
+
+int* leftShift(int* halfKey, int numOfShift);
 int* keyMixing(int* halfBlock, int* subkey);
 int* getHalfBlock(int* block, HalfBlockSide side);
 int* halfBlockPermutation(int* halfBlock);

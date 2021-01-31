@@ -166,6 +166,28 @@ int* initialPermutation(int* bitsBlock)
 	return bitsBlockAfterPermutation;
 }
 
+int* keySecondPermutation(int* keyBlock)
+{
+	int i;
+	int* keyBlockAfterPermutation = (int*)malloc(BITSINSUBKEY * sizeof(int));
+	for (i = 0; i < BITSINSUBKEY; i++)
+	{
+		keyBlockAfterPermutation[i] = keyBlock[PC2[i] - 1];
+	}
+	return keyBlockAfterPermutation;
+}
+
+int* keyfirstPermutation(int* keyBlock)
+{
+	int i;
+	int* keyBlockAfterPermutation = (int*)malloc(KEY_SIZE * sizeof(int));
+	for (i = 0; i < KEY_SIZE; i++)
+	{
+		keyBlockAfterPermutation[i] = keyBlock[PC2[i] - 1];
+	}
+	return keyBlockAfterPermutation;
+}
+
 //create half a block from the left or right side of the block
 int* getHalfBlock(int* block, HalfBlockSide side)
 {
@@ -609,22 +631,20 @@ int* desEncrypt(int* bitsBlock, int* key)
 		printf("Round #%d RIGHT output:\n", i);
 		printBitsArr(rightHalfBlockOutput, BITSINBLOCK / 2);
 	}
-
-	//join the 2 half blocks (left and right)
-	int* joinedBlock = joinHalfblocks(rightHalfBlock, leftHalfBlock);
-
-	//perform the final permutation
-	int* result = finalPermutation(joinedBlock);
-	printf("Block DES encryption output:\n");
-	printBitsArr(result, BITSINBLOCK);
-
-	//free memory
-	free(bitsBlockAfterInitialPer);
-	free(leftHalfBlock);
-	free(rightHalfBlock);
-	free(joinedBlock);
-	printf("\n");
-
-	return result;
 }
+int* leftShift(int* Key,int numOfShift)
+{
+	
+	int* nextKey = (int*)malloc(HALF_KEY_SIZE*2 * sizeof(int));
+	int i;
+	for (i = 0; i < HALF_KEY_SIZE; i++)
+	{
+		nextKey[i] = Key[(i + numOfShift) % HALF_KEY_SIZE];
+	}
+	for (i = HALF_KEY_SIZE - 1; i < 2 * HALF_KEY_SIZE; i++)
+	{
+		nextKey[i] = Key[HALF_KEY_SIZE+(i + numOfShift) % HALF_KEY_SIZE];
+	}
+	return nextKey;
 
+}
