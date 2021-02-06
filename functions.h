@@ -7,10 +7,12 @@ typedef enum {
 	LEFT, RIGHT
 } HalfBlockSide;
 
-int findFileSize(char* filePath);
+int charsAmounInFile(char* filePath);
 char* fileToCharArray(char* filePath, int charArrSize);
 int* charArrToBitsArr(char* charArr, int charArrSize);
+char* bitsArrToCharArr(int* bitsArr, int bitsArrSize);
 int* charToBitsArr(char c);
+char bitsArrToChar(int* bits);
 void printBitsArr(int* bitsArr, int size);
 char** CharArrToCharBlocks(char* charArr, int charCount, int* blockCount_p);
 void printCharsBlock(char** charsBlocksArr, int blocksAmount);
@@ -33,4 +35,8 @@ void prformRound(int* leftInput, int* rightInput, int** leftOutput_p, int** righ
 int* halfBlockXorOperation(int* halfBlock1, int* halfBlock2);
 int* joinHalfblocks(int* firstHalfBlock, int* lastHalfBlock);
 int* finalPermutation(int* bitsBlock);
-void saveEncriptionResult(int* encriptionResult, int size, char* filePath);
+void saveEncriptionResult(int* decriptionResult, int size, char* filePath);
+void saveDecriptionResult(char* decriptionResult, int size, char* filePath);
+void printCharsArr(char* charsArr, int size);
+int* fileToBitsArray(char* filePath, int bitsArrSize);
+int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p);
