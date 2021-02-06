@@ -9,7 +9,7 @@
 
 
 //get amount of chars in file
-int findFileSize(char* filePath)
+int charsAmounInFile(char* filePath)
 {
 	int size;
 	FILE* fp = fopen(filePath, "r");
@@ -445,15 +445,127 @@ int* finalPermutation(int* bitsBlock)
 	return bitsBlockAfterPermutation;
 }
 
-void saveEncriptionResult(int* encriptionResult, int size, char* filePath)
+void saveEncryptionResult(int* encryptionResult, int size, char* filePath)
 {
 	int i;
 	FILE* f = fopen(filePath, "wb");
 	for (i = 0; i < size; i++)
 	{
-		fprintf(f, "%d", encriptionResult[i]);
+		fprintf(f, "%d", encryptionResult[i]);
 	}
 	
 	fclose(f);
 	
+}
+
+// return char of the bits array
+char bitsArrToChar(int* bits)
+{
+	char bitVal;
+	char ans = 0;
+	int shiftsAmount, indexInArr;
+	for (indexInArr = 0 ; indexInArr < BITSINCHAR; indexInArr++)
+	{
+		shiftsAmount = BITSINCHAR - 1 - indexInArr;
+		bitVal = bits[indexInArr];
+
+		ans = (bitVal << shiftsAmount) | ans;
+
+	}
+
+	return ans;
+}
+
+//return char array of the bits array
+char* bitsArrToCharArr(int* bitsArr, int bitsArrSize)
+{
+	int i, j;
+	int* startIndex = bitsArr;
+	int charsAmount = bitsArrSize/BITSINCHAR;
+	char* charsArr = (char*)malloc((charsAmount+1) * sizeof(char));
+
+	for (i = 0; i < charsAmount; i++)
+	{
+		charsArr[i] = bitsArrToChar(startIndex);
+		startIndex = startIndex + BITSINCHAR;
+	}
+	charsArr[i] = 0;
+	return charsArr;
+}
+
+
+void printCharsArr(char* charsArr, int size)
+{
+	int i;
+	for (i = 0; i < size; i++)
+	{
+		printf("%c", charsArr[i]);
+	}
+}
+
+//return bits array of the file content
+int* fileToBitsArray(char* filePath, int bitsArrSize)
+{
+	int i = 0;
+	char ch;
+
+	int* bitsArr = (int*)malloc(bitsArrSize * sizeof(int));
+	FILE* fp = fopen(filePath, "r");
+
+	while (!feof(fp))
+	{
+		ch = getc(fp);
+		if (ch == '1')
+		{
+			bitsArr[i] = 1;
+		}
+		else
+		{
+			bitsArr[i] = 0;
+
+		}
+		
+		i++;
+	}
+
+	fclose(fp);
+	return bitsArr;
+}
+
+
+//devide the bitsArr to blocks (64 bits in block)
+int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p)
+{
+	*blockCount_p = bitsCount / BITSINBLOCK;
+	int** blocksArr = (int**)malloc(*blockCount_p * sizeof(int*));
+	int i, j;
+	int* startIndex = bitsArr;
+	for (i = 0; i < *blockCount_p; i++)
+	{
+		blocksArr[i] = (int*)malloc(BITSINBLOCK * sizeof(int));
+		for (j = 0; j < BITSINBLOCK; j++)
+		{
+			blocksArr[i][j] = *(startIndex + j);
+		}
+		startIndex = startIndex + BITSINBLOCK;
+	}
+	return blocksArr;
+}
+
+void saveDecryptionResult(char* decryptionResult, int size, char* filePath)
+{
+	int i;
+	FILE* f = fopen(filePath, "wb");
+	for (i = 0; i < size; i++)
+	{
+		if (decryptionResult[i] == 0)
+		{
+			fclose(f);
+			return;
+		}
+		fprintf(f, "%c", decryptionResult[i]);
+	}
+
+	fclose(f);
+
 }
