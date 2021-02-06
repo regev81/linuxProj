@@ -40,3 +40,4 @@ void saveDecryptionResult(char* decryptionResult, int size, char* filePath);
 void printCharsArr(char* charsArr, int size);
 int* fileToBitsArray(char* filePath, int bitsArrSize);
 int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p);
+int* desEncrypt(int* bitsBlock, int* key);

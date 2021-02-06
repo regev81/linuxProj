@@ -479,7 +479,7 @@ char bitsArrToChar(int* bits)
 //return char array of the bits array
 char* bitsArrToCharArr(int* bitsArr, int bitsArrSize)
 {
-	int i, j;
+	int i;
 	int* startIndex = bitsArr;
 	int charsAmount = bitsArrSize/BITSINCHAR;
 	char* charsArr = (char*)malloc((charsAmount+1) * sizeof(char));
@@ -569,3 +569,62 @@ void saveDecryptionResult(char* decryptionResult, int size, char* filePath)
 	fclose(f);
 
 }
+
+int* desEncrypt(int* bitsBlock, int* key)
+{
+	int i;
+	int rounds = 16;
+	int* subkey = key;
+	int** encryptionBlocksResult;
+	//perform initial permutation
+	int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock);
+	printf("InitialPer bits:\n");
+	printBitsArr(bitsBlockAfterInitialPer, BITSINBLOCK);
+
+
+	//right half block
+	HalfBlockSide right = RIGHT;
+	int* rightHalfBlock = getHalfBlock(bitsBlockAfterInitialPer, right);
+	printf("RIGHT side:\n");
+	printBitsArr(rightHalfBlock, BITSINBLOCK / 2);
+
+	//left half block
+	HalfBlockSide left = LEFT;
+	int* leftHalfBlock = getHalfBlock(bitsBlockAfterInitialPer, left);
+	printf("LEFT side:\n");
+	printBitsArr(leftHalfBlock, BITSINBLOCK / 2);
+
+	//start encryption rounds
+	for (i = 0; i < rounds; i++)
+	{
+		printf("\nRound #%d:\n---------------\n", i);
+		int* leftHalfBlockOutput;
+		int* rightHalfBlockOutput;
+		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, subkey);
+		leftHalfBlock = leftHalfBlockOutput;
+		rightHalfBlock = rightHalfBlockOutput;
+
+		printf("Round #%d LEFT output:\n", i);
+		printBitsArr(leftHalfBlockOutput, BITSINBLOCK / 2);
+		printf("Round #%d RIGHT output:\n", i);
+		printBitsArr(rightHalfBlockOutput, BITSINBLOCK / 2);
+	}
+
+	//join the 2 half blocks (left and right)
+	int* joinedBlock = joinHalfblocks(rightHalfBlock, leftHalfBlock);
+
+	//perform the final permutation
+	int* result = finalPermutation(joinedBlock);
+	printf("Block DES encryption output:\n");
+	printBitsArr(result, BITSINBLOCK);
+
+	//free memory
+	free(bitsBlockAfterInitialPer);
+	free(leftHalfBlock);
+	free(rightHalfBlock);
+	free(joinedBlock);
+	printf("\n");
+
+	return result;
+}
+
