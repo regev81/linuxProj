@@ -35,8 +35,8 @@ void prformRound(int* leftInput, int* rightInput, int** leftOutput_p, int** righ
 int* halfBlockXorOperation(int* halfBlock1, int* halfBlock2);
 int* joinHalfblocks(int* firstHalfBlock, int* lastHalfBlock);
 int* finalPermutation(int* bitsBlock);
-void saveEncriptionResult(int* decriptionResult, int size, char* filePath);
-void saveDecriptionResult(char* decriptionResult, int size, char* filePath);
+void saveEncryptionResult(int* decryptionResult, int size, char* filePath);
+void saveDecryptionResult(char* decryptionResult, int size, char* filePath);
 void printCharsArr(char* charsArr, int size);
 int* fileToBitsArray(char* filePath, int bitsArrSize);
 int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p);

@@ -3,35 +3,35 @@
 #include "functions.h"
 #define PLAINTEXTFILE "plaintextfile.txt"
 #define CYPHERFILE "cypherfile.txt"
-#define DECRIPTIONRES "decriptionres.txt"
-//https://en.wikipedia.org/wiki/Data_Encryption_Standard
-void encriptionFlow();
-void decriptionFlow();
+#define DECRYPTIONRES "decryptionres.txt"
+
+void encryptionFlow();
+void decryptionFlow();
 
 int main(int argc, char* argv[]) 
 {
-	//EncriptionFlow();
-	decriptionFlow();
+	//encryptionFlow();
+	decryptionFlow();
 
 }
 
-void encriptionFlow()
+void encryptionFlow()
 {
 	int blocksAmount, i, j;
 	int rounds = 16;
 	int charCount = charsAmounInFile(PLAINTEXTFILE);
 	char* charArr = fileToCharArray(PLAINTEXTFILE, charCount);
-	int** encriptionBlocksResult;
-	int* encriptionResult;
+	int** encryptionBlocksResult;
+	int* encryptionResult;
 
 	//create array of all the chars blocks from the file content
 	char** charsBlocksArr = CharArrToCharBlocks(charArr, charCount, &blocksAmount);
 
-	//create encriptionBlocksResult arr
-	encriptionBlocksResult = (int**)malloc(blocksAmount * sizeof(int*));
+	//create encryptionBlocksResult arr
+	encryptionBlocksResult = (int**)malloc(blocksAmount * sizeof(int*));
 
 	//iterate each chars block, convert it to bits block and encript 
-	printf("\nStart Encription:\n----------------------------------------------\n");
+	printf("\nStart encryption:\n----------------------------------------------\n");
 	for (i = 0; i < blocksAmount; i++)
 	{
 		printf("Block #%d:\n--------------------------------\n\n",i);
@@ -72,7 +72,7 @@ void encriptionFlow()
 		printf("LEFT side:\n");
 		printBitsArr(leftHalfBlock, BITSINBLOCK / 2);
 
-		//start encription rounds
+		//start encryption rounds
 		for (j = 0; j < rounds; j++)
 		{
 			printf("\nRound #%d:\n---------------\n", j);
@@ -92,9 +92,9 @@ void encriptionFlow()
 		int* joinedBlock = joinHalfblocks(rightHalfBlock, leftHalfBlock);
 
 		//perform the final permutation
-		encriptionBlocksResult[i] = finalPermutation(joinedBlock);
-		printf("Block encription output:\n");
-		printBitsArr(encriptionBlocksResult[i], BITSINBLOCK);
+		encryptionBlocksResult[i] = finalPermutation(joinedBlock);
+		printf("Block encryption output:\n");
+		printBitsArr(encryptionBlocksResult[i], BITSINBLOCK);
 
 
 
@@ -108,49 +108,49 @@ void encriptionFlow()
 	}
 
 	//flattern the blocks to single arr of bits
-	encriptionResult = (int*)malloc((blocksAmount*BITSINBLOCK) * sizeof(int));
+	encryptionResult = (int*)malloc((blocksAmount*BITSINBLOCK) * sizeof(int));
 	for (i = 0; i < (blocksAmount * BITSINBLOCK);i++)
 	{
-		encriptionResult[i] = encriptionBlocksResult[i / BITSINBLOCK][i % BITSINBLOCK];
+		encryptionResult[i] = encryptionBlocksResult[i / BITSINBLOCK][i % BITSINBLOCK];
 	}
 
 	//print cypher result
 	printf("cypher result:\n");
-	printBitsArr(encriptionResult, blocksAmount * BITSINBLOCK);
+	printBitsArr(encryptionResult, blocksAmount * BITSINBLOCK);
 
 	//save result to file
-	saveEncriptionResult(encriptionResult, blocksAmount * BITSINBLOCK, CYPHERFILE);
+	saveEncryptionResult(encryptionResult, blocksAmount * BITSINBLOCK, CYPHERFILE);
 
 	//free memory
 	free(charArr);
-	free(encriptionResult);
+	free(encryptionResult);
 	for (i = 0; i < blocksAmount; i++)
 	{
 		free(charsBlocksArr[i]);
-		free(encriptionBlocksResult[i]);
+		free(encryptionBlocksResult[i]);
 	}
 	free(charsBlocksArr);
-	free(encriptionBlocksResult);
+	free(encryptionBlocksResult);
 }
 
 
-void decriptionFlow()
+void decryptionFlow()
 {
 	int blocksAmount, i, j;
 	int rounds = 16;
 	int bitsCount = charsAmounInFile(CYPHERFILE);
 	int* bitsArr = fileToBitsArray(CYPHERFILE, bitsCount);
-	int** decriptionBlocksResult;
-	int* decriptionResult;
+	int** decryptionBlocksResult;
+	int* decryptionResult;
 
 	//create array of all the bits blocks from the file content
 	int** bitsBlocksArr = bitsArrToBitsBlocks(bitsArr, bitsCount, &blocksAmount);
 
-	//create decriptionBlocksResult arr
-	decriptionBlocksResult = (int**)malloc(blocksAmount * sizeof(int*));
+	//create decryptionBlocksResult arr
+	decryptionBlocksResult = (int**)malloc(blocksAmount * sizeof(int*));
 	
 	//iterate each bits block and decript 
-	printf("\nStart Decription:\n----------------------------------------------\n");
+	printf("\nStart decryption:\n----------------------------------------------\n");
 	for (i = 0; i < blocksAmount; i++)
 	{
 		printf("Block #%d:\n--------------------------------\n\n", i);
@@ -186,7 +186,7 @@ void decriptionFlow()
 		printf("LEFT side:\n");
 		printBitsArr(leftHalfBlock, BITSINBLOCK / 2);
 
-		//start decription rounds
+		//start decryption rounds
 		for (j = 0; j < rounds; j++)
 		{
 			printf("\nRound #%d:\n---------------\n", j);
@@ -206,9 +206,9 @@ void decriptionFlow()
 		int* joinedBlock = joinHalfblocks(rightHalfBlock, leftHalfBlock);
 
 		//perform the final permutation
-		decriptionBlocksResult[i] = finalPermutation(joinedBlock);
-		printf("Block decription output:\n");
-		printBitsArr(decriptionBlocksResult[i], BITSINBLOCK);
+		decryptionBlocksResult[i] = finalPermutation(joinedBlock);
+		printf("Block decryption output:\n");
+		printBitsArr(decryptionBlocksResult[i], BITSINBLOCK);
 
 
 
@@ -221,33 +221,33 @@ void decriptionFlow()
 	}
 
 	//flattern the blocks to single arr of bits
-	decriptionResult = (int*)malloc((blocksAmount * BITSINBLOCK) * sizeof(int));
+	decryptionResult = (int*)malloc((blocksAmount * BITSINBLOCK) * sizeof(int));
 	for (i = 0; i < (blocksAmount * BITSINBLOCK); i++)
 	{
-		decriptionResult[i] = decriptionBlocksResult[i / BITSINBLOCK][i % BITSINBLOCK];
+		decryptionResult[i] = decryptionBlocksResult[i / BITSINBLOCK][i % BITSINBLOCK];
 	}
 
-	//print decription result
-	printf("decription result:\n");
-	printBitsArr(decriptionResult, blocksAmount * BITSINBLOCK);
+	//print decryption result
+	printf("decryption result:\n");
+	printBitsArr(decryptionResult, blocksAmount * BITSINBLOCK);
 
 	//convert bits arr to char arr
-	char* decriptionResultStr = bitsArrToCharArr(decriptionResult, bitsCount);
-	printf("%s", decriptionResultStr);
+	char* decryptionResultStr = bitsArrToCharArr(decryptionResult, bitsCount);
+	printf("%s", decryptionResultStr);
 
 	//save result to file
-	saveDecriptionResult(decriptionResultStr, blocksAmount*CHARSINBLOCK, DECRIPTIONRES);
+	saveDecryptionResult(decryptionResultStr, blocksAmount*CHARSINBLOCK, DECRYPTIONRES);
 
 	//free memory
 	//free(bitsArr);
-	free(decriptionResult);
+	free(decryptionResult);
 	for (i = 0; i < blocksAmount; i++)
 	{
-		free(decriptionBlocksResult[i]);
+		free(decryptionBlocksResult[i]);
 	}
 	free(bitsBlocksArr);
-	free(decriptionBlocksResult);
-	free(decriptionResultStr);
+	free(decryptionBlocksResult);
+	free(decryptionResultStr);
 	
 	}
 	

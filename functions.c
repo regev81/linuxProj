@@ -445,13 +445,13 @@ int* finalPermutation(int* bitsBlock)
 	return bitsBlockAfterPermutation;
 }
 
-void saveEncriptionResult(int* encriptionResult, int size, char* filePath)
+void saveEncryptionResult(int* encryptionResult, int size, char* filePath)
 {
 	int i;
 	FILE* f = fopen(filePath, "wb");
 	for (i = 0; i < size; i++)
 	{
-		fprintf(f, "%d", encriptionResult[i]);
+		fprintf(f, "%d", encryptionResult[i]);
 	}
 	
 	fclose(f);
@@ -552,18 +552,18 @@ int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p)
 	return blocksArr;
 }
 
-void saveDecriptionResult(char* decriptionResult, int size, char* filePath)
+void saveDecryptionResult(char* decryptionResult, int size, char* filePath)
 {
 	int i;
 	FILE* f = fopen(filePath, "wb");
 	for (i = 0; i < size; i++)
 	{
-		if (decriptionResult[i] == 0)
+		if (decryptionResult[i] == 0)
 		{
 			fclose(f);
 			return;
 		}
-		fprintf(f, "%c", decriptionResult[i]);
+		fprintf(f, "%c", decryptionResult[i]);
 	}
 
 	fclose(f);
