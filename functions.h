@@ -26,7 +26,7 @@ int* keyfirstPermutation(int* keyBlock);
 int* expansion(int* rightInput);
 int* feistelFunction(int* halfBlock, int* subkey);
 int bitXorOperation(int bit, int bit2);
-
+int** generateAllKeys(int* key);
 int* leftShift(int* halfKey, int numOfShift);
 int* keyMixing(int* halfBlock, int* subkey);
 int* getHalfBlock(int* block, HalfBlockSide side);

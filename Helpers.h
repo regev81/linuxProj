@@ -35,7 +35,7 @@ int ExtenderMatrix[] =
 	  24, 25, 26, 27, 28, 29,
 	  28, 29, 30, 31, 32,  1
 };
-
+int shift[16] = { 1, 1, 2, 2, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 1 };
 int HalfBlockPermutationMatrix[32] =
 {
 	  16,  7, 20, 21,

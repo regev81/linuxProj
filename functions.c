@@ -283,6 +283,33 @@ int bitXorOperation(int bit, int bit2)
 	}
 }
 
+int** generateAllKeys(int* key)
+{
+	int** allkeys = (int**)malloc(16 * sizeof(int*));
+	int i = 0,j;
+	int* key56 = keyfirstPermutation(key);
+	int* leftKey = key56;
+	int* rightKey = key56 + 8 * sizeof(int);
+	for (i; i < 16; i++)
+	{
+		allkeys[i] = (int*)malloc(BITSINSUBKEY);
+		leftKey=leftShift(leftKey, shift[i]);
+		rightKey= leftShift(leftKey, shift[i]);
+		for (j = 0; j < KEY_SIZE; j++)
+		{
+			if (j >= 28)
+				key56[j] = rightKey[j % 28];
+			key56[j] = leftKey[j];
+		}
+		allkeys[i] = keySecondPermutation(key56);
+		leftKey = key56;
+		rightKey = key56 + 8 * sizeof(int);
+
+
+	}
+	return allkeys;
+}
+
 //perform permutation for half block
 int* halfBlockPermutation(int* halfBlock)
 {
@@ -596,7 +623,8 @@ int* desEncrypt(int* bitsBlock, int* key)
 {
 	int i;
 	int rounds = 16;
-	int* subkey = key;
+	int** allkeys = generateAllKeys(key);
+	
 	int** encryptionBlocksResult;
 	//perform initial permutation
 	int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock);
@@ -622,7 +650,7 @@ int* desEncrypt(int* bitsBlock, int* key)
 		printf("\nRound #%d:\n---------------\n", i);
 		int* leftHalfBlockOutput;
 		int* rightHalfBlockOutput;
-		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, subkey);
+		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, allkeys[i]);
 		leftHalfBlock = leftHalfBlockOutput;
 		rightHalfBlock = rightHalfBlockOutput;
 
