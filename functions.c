@@ -574,7 +574,7 @@ int* desEncrypt(int* bitsBlock, int* key)
 {
 	int i;
 	int rounds = 16;
-	int* subkey = key;
+	int** allKeys = generateAllKeys(key);
 	int** encryptionBlocksResult;
 	//perform initial permutation
 	int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock);
@@ -600,7 +600,7 @@ int* desEncrypt(int* bitsBlock, int* key)
 		printf("\nRound #%d:\n---------------\n", i);
 		int* leftHalfBlockOutput;
 		int* rightHalfBlockOutput;
-		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, subkey);
+		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, allKeys[i]);
 		leftHalfBlock = leftHalfBlockOutput;
 		rightHalfBlock = rightHalfBlockOutput;
 
@@ -628,3 +628,126 @@ int* desEncrypt(int* bitsBlock, int* key)
 	return result;
 }
 
+int* keySecondPermutation(int* keyBlock)
+{
+	int i;
+	int* keyBlockAfterPermutation = (int*)malloc(BITSINSUBKEY * sizeof(int));
+	for (i = 0; i < BITSINSUBKEY; i++)
+	{
+		keyBlockAfterPermutation[i] = keyBlock[PC2[i] - 1];
+	}
+	return keyBlockAfterPermutation;
+}
+
+int* keyfirstPermutation(int* keyBlock)
+{
+	int i;
+	int* keyBlockAfterPermutation = (int*)malloc(KEY_SIZE * sizeof(int));
+	for (i = 0; i < KEY_SIZE; i++)
+	{
+		keyBlockAfterPermutation[i] = keyBlock[PC2[i] - 1];
+	}
+	return keyBlockAfterPermutation;
+}
+
+int** generateAllKeys(int* key)
+{
+	int** allkeys = (int**)malloc(16 * sizeof(int*));
+	int i = 0, j;
+	int* key56 = keyfirstPermutation(key);
+	int* leftKey = key56;
+	int* rightKey = key56 + 8 * sizeof(int);
+	for (i; i < 16; i++)
+	{
+		allkeys[i] = (int*)malloc(BITSINSUBKEY);
+		leftKey = leftShift(leftKey, shift[i]);
+		rightKey = leftShift(leftKey, shift[i]);
+		for (j = 0; j < KEY_SIZE; j++)
+		{
+			if (j >= 28)
+				key56[j] = rightKey[j % 28];
+			key56[j] = leftKey[j];
+		}
+		allkeys[i] = keySecondPermutation(key56);
+		leftKey = key56;
+		rightKey = key56 + 8 * sizeof(int);
+
+
+	}
+	return allkeys;
+}
+
+int* leftShift(int* Key, int numOfShift)
+{
+
+	int* nextKey = (int*)malloc(HALF_KEY_SIZE * 2 * sizeof(int));
+	int i;
+	for (i = 0; i < HALF_KEY_SIZE; i++)
+	{
+		nextKey[i] = Key[(i + numOfShift) % HALF_KEY_SIZE];
+	}
+	for (i = HALF_KEY_SIZE - 1; i < 2 * HALF_KEY_SIZE; i++)
+	{
+		nextKey[i] = Key[HALF_KEY_SIZE + (i + numOfShift) % HALF_KEY_SIZE];
+	}
+	return nextKey;
+
+}
+
+int* desDecrypt(int* bitsBlock, int* key)
+{
+	int i;
+	int rounds = 16;
+	int** allKeys = generateAllKeys(key);
+	int** encryptionBlocksResult;
+	//perform initial permutation
+	int* bitsBlockAfterInitialPer = initialPermutation(bitsBlock);
+	printf("InitialPer bits:\n");
+	printBitsArr(bitsBlockAfterInitialPer, BITSINBLOCK);
+
+
+	//right half block
+	HalfBlockSide right = RIGHT;
+	int* rightHalfBlock = getHalfBlock(bitsBlockAfterInitialPer, right);
+	printf("RIGHT side:\n");
+	printBitsArr(rightHalfBlock, BITSINBLOCK / 2);
+
+	//left half block
+	HalfBlockSide left = LEFT;
+	int* leftHalfBlock = getHalfBlock(bitsBlockAfterInitialPer, left);
+	printf("LEFT side:\n");
+	printBitsArr(leftHalfBlock, BITSINBLOCK / 2);
+
+	//start encryption rounds
+	for (i = 0; i < rounds; i++)
+	{
+		printf("\nRound #%d:\n---------------\n", i);
+		int* leftHalfBlockOutput;
+		int* rightHalfBlockOutput;
+		prformRound(leftHalfBlock, rightHalfBlock, &leftHalfBlockOutput, &rightHalfBlockOutput, allKeys[rounds-1-i]);
+		leftHalfBlock = leftHalfBlockOutput;
+		rightHalfBlock = rightHalfBlockOutput;
+
+		printf("Round #%d LEFT output:\n", i);
+		printBitsArr(leftHalfBlockOutput, BITSINBLOCK / 2);
+		printf("Round #%d RIGHT output:\n", i);
+		printBitsArr(rightHalfBlockOutput, BITSINBLOCK / 2);
+	}
+
+	//join the 2 half blocks (left and right)
+	int* joinedBlock = joinHalfblocks(rightHalfBlock, leftHalfBlock);
+
+	//perform the final permutation
+	int* result = finalPermutation(joinedBlock);
+	printf("Block DES encryption output:\n");
+	printBitsArr(result, BITSINBLOCK);
+
+	//free memory
+	free(bitsBlockAfterInitialPer);
+	free(leftHalfBlock);
+	free(rightHalfBlock);
+	free(joinedBlock);
+	printf("\n");
+
+	return result;
+}

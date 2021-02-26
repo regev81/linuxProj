@@ -11,7 +11,7 @@ void threeDesDecrypt();
 int main(int argc, char* argv[]) 
 {
 	//threeDesEncrypt();
-	//threeDesDecrypt();
+	threeDesDecrypt();
 
 }
 
@@ -50,13 +50,13 @@ void threeDesDecrypt()
 		};
 
 		//first des
-		int* desDecryptionResult_a = desEncrypt(bitsBlocksArr[i], key);
+		int* desDecryptionResult_a = desDecrypt(bitsBlocksArr[i], key);
 
 		//second des
-		int* desDecryptionResult_b = desEncrypt(desDecryptionResult_a, key);
+		int* desDecryptionResult_b = desDecrypt(desDecryptionResult_a, key);
 
 		//third des
-		decryptionBlocksResult[i] = desEncrypt(desDecryptionResult_b, key);
+		decryptionBlocksResult[i] = desDecrypt(desDecryptionResult_b, key);
 
 		free(desDecryptionResult_a);
 		free(desDecryptionResult_b);

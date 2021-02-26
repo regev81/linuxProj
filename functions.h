@@ -3,6 +3,10 @@
 #define CHARSINBLOCK 8
 #define BITSINBLOCK 64
 #define BITSINSUBKEY 48
+#define HALF_KEY_SIZE 28
+#define KEY_SIZE 56
+#define ROUNDS 16
+
 typedef enum {
 	LEFT, RIGHT
 } HalfBlockSide;
@@ -41,3 +45,8 @@ void printCharsArr(char* charsArr, int size);
 int* fileToBitsArray(char* filePath, int bitsArrSize);
 int** bitsArrToBitsBlocks(int* bitsArr, int bitsCount, int* blockCount_p);
 int* desEncrypt(int* bitsBlock, int* key);
+int* keySecondPermutation(int* keyBlock);
+int* keyfirstPermutation(int* keyBlock);
+int** generateAllKeys(int* key);
+int* leftShift(int* Key, int numOfShift);
+int* desDecrypt(int* bitsBlock, int* key);
